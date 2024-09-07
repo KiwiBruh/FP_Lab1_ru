@@ -1,25 +1,38 @@
-// Print a table of a given function f, computed by taylor series
-
-// function to compute
-let f = sin
+open System
 
 let a = 0.0
 let b = 1.0
+let eps = 0.000001
+let delta = 0.1
 let n = 10
 
-// Define a function to compute f using naive taylor series method
-let taylor_naive = f
+let f x = sin x// my function
 
+let rec factorial z = if z=1.0 then 1.0 else z * factorial (z-1.0)// needed for tailor
 
-// Define a function to do the same in a more efficient way
-let taylor = f
+let dumb_tailor x =
+    let rec tailor n final equas =
+        if eps >= abs equas then final, n
+        else
+            let curFact = factorial(2.0*n+1.0)
+            let equas = ((((-1.0) ** n) * (x ** (2.0*n + 1.0))) / curFact)
+            tailor (n + 1.0) (final + equas) equas
+    tailor 1 x (x)
+
+let smart_tailor x =
+    let rec tailor_2 n final equas =
+        if eps >= abs equas then final, n
+        else
+            let equas = equas * (-1.0)*(x**2.0)/((2.0 * n + 2.0) * (2.0 * n + 3.0))
+            tailor_2 (n + 1.0) (final + equas) equas
+    tailor_2 0 (x) (1)
 
 let main =
-   for i=0 to n do
-     let x = a+(float i)/(float n)*(b-a)
-     printfn "%5.2f  %10.6f  %10.6f   %10.6f" x (f x) (taylor_naive x) (taylor x)
-// make sure to improve this table to include the required number of iterations
-// for each of the methods
-
-main
-
+    let rec table a b =
+        if a > b then printfn("finished")
+        else
+            let dumb, n1 = dumb_tailor a
+            let smart, n2 = smart_tailor a
+            printfn "%5.1f   %f  %f  %.0f  %f  %.0f" a (f a) dumb n1 smart n2
+            table (a + delta) b
+    table a b
