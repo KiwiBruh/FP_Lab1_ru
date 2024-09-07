@@ -21,11 +21,11 @@ let dumb_tailor x =
 
 let smart_tailor x =
     let rec tailor_2 n final equas =
-        if eps >= abs equas then final, n
+        if eps >= abs equas then final, n + 1.0
         else
             let equas = equas * (-1.0)*(x**2.0)/((2.0 * n + 2.0) * (2.0 * n + 3.0))
             tailor_2 (n + 1.0) (final + equas) equas
-    tailor_2 0 (x) (1)
+    tailor_2 0 (x) (x)
 
 let main =
     let rec table a b =
@@ -33,6 +33,6 @@ let main =
         else
             let dumb, n1 = dumb_tailor a
             let smart, n2 = smart_tailor a
-            printfn "%5.1f   %f  %f  %.0f  %f  %.0f" a (f a) dumb n1 smart n2
+            printfn "|%5.1f | %f | %f | %.0f | %f | %.0f |" a (f a) smart n2 dumb n1
             table (a + delta) b
     table a b
